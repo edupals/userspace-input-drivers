@@ -19,24 +19,34 @@
 
 #include "DriverFactory.hpp"
 
-#include <iostream>
-#include <string>
-
 using namespace usid;
 
 using namespace std;
 
-int main (int argc,char* argv[])
-{
+/* static factory map */
+map<string,DriverFactory*> DriverFactory::factories;
 
-    clog<<"Edupals userspace input driver"<<endl;
-    clog<<endl;
-    
-    for (string driver : DriverFactory::drivers()) {
-        clog<<"* "<<driver<<endl;
-    }
-    
-    
-    return 0;
+DriverFactory::DriverFactory(string name) : name(name)
+{
+    DriverFactory::factories[name] = this;
 }
 
+DriverFactory::~DriverFactory()
+{
+    map<string,DriverFactory*>::iterator it = DriverFactory::factories.find(name);
+    
+    if (it != DriverFactory::factories.end()) {
+        DriverFactory::factories.erase(it);
+    }
+}
+
+vector<string> DriverFactory::drivers()
+{
+    vector<string> ret;
+    
+    for (auto q : DriverFactory::factories) {
+        ret.push_back(q.first);
+    }
+    
+    return ret;
+}

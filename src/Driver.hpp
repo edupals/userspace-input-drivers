@@ -17,26 +17,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "DriverFactory.hpp"
+#ifndef USID_DRIVER
+#define USID_DRIVER
 
-#include <iostream>
 #include <string>
 
-using namespace usid;
-
-using namespace std;
-
-int main (int argc,char* argv[])
+namespace usid
 {
-
-    clog<<"Edupals userspace input driver"<<endl;
-    clog<<endl;
-    
-    for (string driver : DriverFactory::drivers()) {
-        clog<<"* "<<driver<<endl;
-    }
-    
-    
-    return 0;
+    class Driver
+    {
+        public:
+            
+        Driver();
+        virtual ~Driver();
+        
+        virtual void run();
+        
+    };
 }
 
+#endif

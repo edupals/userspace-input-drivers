@@ -17,26 +17,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "UsbRawDriver.hpp"
 #include "DriverFactory.hpp"
-
-#include <iostream>
-#include <string>
 
 using namespace usid;
 
 using namespace std;
 
-int main (int argc,char* argv[])
+class Factory: public DriverFactory
 {
-
-    clog<<"Edupals userspace input driver"<<endl;
-    clog<<endl;
-    
-    for (string driver : DriverFactory::drivers()) {
-        clog<<"* "<<driver<<endl;
+    public:
+        
+    Factory() : DriverFactory("edupals.usbraw") 
+    {
     }
     
+    Driver* create(string device) override
+    {
+        return new UsbRawDriver(device);
+    }
     
-    return 0;
+};
+
+Factory factory;
+
+UsbRawDriver::UsbRawDriver(string device) : Driver()
+{
 }
 
+void UsbRawDriver::run()
+{
+}
