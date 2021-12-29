@@ -18,6 +18,7 @@
 */
 
 #include "DriverFactory.hpp"
+#include "Driver.hpp"
 
 #include <iostream>
 #include <string>
@@ -26,16 +27,39 @@ using namespace usid;
 
 using namespace std;
 
+void list_drivers()
+{
+    for (string driver : DriverFactory::drivers()) {
+        cout<<"* "<<driver<<endl;
+    }
+
+}
+
 int main (int argc,char* argv[])
 {
 
     clog<<"Edupals userspace input driver"<<endl;
     clog<<endl;
     
-    for (string driver : DriverFactory::drivers()) {
-        clog<<"* "<<driver<<endl;
+    if (argc>1) {
+        string cmd = argv[1];
+        
+        if (cmd == "list-drivers") {
+            list_drivers();
+            return 0;
+        }
+        
+        if (cmd == "run") {
+            if (argc<4) {
+                cerr<<"Usage: run DRIVER DEVICE_PATH"<<endl;
+                return -1;
+            }
+            
+            Driver* driver = DriverFactory::find(argv[2])->create(argv[3]);
+            
+            driver->run();
+        }
     }
-    
     
     return 0;
 }

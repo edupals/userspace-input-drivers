@@ -20,15 +20,21 @@
 #include "UsbRawDriver.hpp"
 #include "DriverFactory.hpp"
 
+#include <unistd.h>
+#include <fcntl.h>
+
+#include <iostream>
+#include <exception>
+
 using namespace usid;
 
 using namespace std;
 
-class Factory: public DriverFactory
+class UsbRawFactory: public DriverFactory
 {
     public:
         
-    Factory() : DriverFactory("edupals.usbraw") 
+    UsbRawFactory() : DriverFactory("edupals.usb.raw") 
     {
     }
     
@@ -39,12 +45,67 @@ class Factory: public DriverFactory
     
 };
 
-Factory factory;
+static UsbRawFactory factory;
 
-UsbRawDriver::UsbRawDriver(string device) : Driver()
+UsbRawDriver::UsbRawDriver(string device) : Driver(device)
 {
+    int status;
+    
+    if (libusb_init(&usb_context) < 0) {
+        throw runtime_error("Failed to init libusb");
+    }
+    
+    usb_fd = open(device.c_str(),O_RDWR);
+    
+    status = libusb_wrap_sys_device(usb_context, usb_fd, &usb_handle);
+    
+    clog<<"fd:"<<usb_fd<<endl;
+    clog<<"status:"<<status<<endl;
+    
+    if (status!=0) {
+        throw runtime_error("Failed to open device:"+std::to_string(status));
+    }
+    
+    if (libusb_kernel_driver_active(usb_handle, 0) == 1) {
+        libusb_detach_kernel_driver(usb_handle, 0);
+    }
+    
+    libusb_claim_interface(usb_handle, 0);
+}
+
+UsbRawDriver::~UsbRawDriver()
+{
+    libusb_exit(usb_context);
 }
 
 void UsbRawDriver::run()
 {
+    clog<<"Running USB Raw driver on "<<device<<endl;
+    
+    map<int,string> errcodes;
+    
+    errcodes[LIBUSB_ERROR_TIMEOUT] = "timeout";
+    errcodes[LIBUSB_ERROR_PIPE] = "pipe";
+    errcodes[LIBUSB_ERROR_OVERFLOW] = "overflow";
+    errcodes[LIBUSB_ERROR_NO_DEVICE] = "no device";
+    errcodes[LIBUSB_ERROR_BUSY] = "busy";
+    errcodes[LIBUSB_ERROR_INVALID_PARAM] = "invalid param";
+    
+    int status;
+    uint8_t buffer[64];
+    int length;
+    
+    while (true) {
+        status = libusb_interrupt_transfer(usb_handle,(2 | LIBUSB_ENDPOINT_IN),buffer,64,&length,1000);
+        
+        if (status!=0) {
+            clog<<"read error:"<<status<<" reason:"<<errcodes[status]<<endl;
+            continue;
+        }
+        clog<<"read:"<<length<<endl;
+        for (int n=0;n<length;n++){
+            clog<<std::hex<<(int)buffer[n]<<" ";
+        }
+        clog<<endl;
+    }
 }

@@ -22,6 +22,8 @@
 
 #include "Driver.hpp"
 
+#include <libusb-1.0/libusb.h>
+
 #include <string>
 
 namespace usid
@@ -31,8 +33,16 @@ namespace usid
         public:
         
         UsbRawDriver(std::string device);
+        ~UsbRawDriver();
         
         void run() override;
+        
+        protected:
+        
+        libusb_context* usb_context;
+        libusb_device_handle* usb_handle;
+        libusb_device* usb_device;
+        int usb_fd;
     };
 }
 

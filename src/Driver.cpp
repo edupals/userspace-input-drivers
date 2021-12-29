@@ -21,7 +21,9 @@
 
 using namespace usid;
 
-Driver::Driver()
+using namespace std;
+
+Driver::Driver(string device) : device(device)
 {
 }
 

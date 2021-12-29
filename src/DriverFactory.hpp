@@ -39,6 +39,7 @@ namespace usid
         virtual Driver* create(std::string device) = 0;
         
         static std::vector<std::string> drivers();
+        static DriverFactory* find(std::string name);
         
         protected:
         

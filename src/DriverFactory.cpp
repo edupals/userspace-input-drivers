@@ -50,3 +50,8 @@ vector<string> DriverFactory::drivers()
     
     return ret;
 }
+
+DriverFactory* DriverFactory::find(string name)
+{
+    return DriverFactory::factories[name];
+}

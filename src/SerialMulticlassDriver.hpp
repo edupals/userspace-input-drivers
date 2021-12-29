@@ -17,25 +17,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef USID_DRIVER
-#define USID_DRIVER
+#ifndef USID_SERIAL_MULTICLASS
+#define USID_SERIAL_MULTICLASS
 
-#include <string>
+#include "Driver.hpp"
 
 namespace usid
 {
-    class Driver
+    enum Command : uint8_t
+    {
+        Packet=0xAA,
+        Welcome=0xA8,
+        Init=0xCA,
+        KeepAlive=0xCC
+    };
+    
+    class SerialMulticlassDriver: public Driver
     {
         public:
         
-        Driver(std::string device);
-        virtual ~Driver();
+        SerialMulticlassDriver(std::string device);
+        ~SerialMulticlassDriver();
         
-        virtual void run();
+        void run() override;
         
         protected:
         
-        std::string device;
+        int serial_fd;
     };
 }
 
