@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "DriverFactory.hpp"
+#include "driverfactory.hpp"
 
 using namespace usid;
 

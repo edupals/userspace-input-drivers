@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "SerialMulticlassDriver.hpp"
-#include "DriverFactory.hpp"
+#include "serialmulticlassdriver.hpp"
+#include "driverfactory.hpp"
 
 #include <unistd.h>
 #include <fcntl.h>

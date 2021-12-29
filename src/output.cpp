@@ -17,20 +17,48 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "driver.hpp"
+#include "output.hpp"
+
+#include <cstring>
 
 using namespace usid;
 
 using namespace std;
 
-Driver::Driver(string device) : device(device)
+OutputConfig::OutputConfig(string name, uint16_t vendor, uint16_t product) : name(name), vendor(vendor), product(product) 
 {
+    //std::memset(&dev, 0, sizeof(struct uinput_user_dev));
 }
 
-Driver::~Driver()
+void OutputConfig::add_absolute(uint32_t axis, int32_t min, int32_t max)
 {
+    cfg.insert(EV_ABS);
+    
+    axes.insert(axis);
+    
+    AbsConfig cfg;
+    
+    cfg.min = min;
+    cfg.max = max;
+    
+    axis_cfg[axis]=cfg;
+    
 }
 
-void Driver::run()
+void OutputConfig::add_relative(uint32_t axis)
 {
+    cfg.insert(EV_REL);
+    axes.insert(axis);
+}
+
+void OutputConfig::add_buttons(vector<uint32_t> buttons)
+{
+    cfg.insert(EV_KEY);
+    keys.insert(buttons.begin(),buttons.end());
+}
+
+void OutputConfig::add_keys(vector<uint32_t> keys)
+{
+    cfg.insert(EV_KEY);
+    this->keys.insert(keys.begin(),keys.end());
 }

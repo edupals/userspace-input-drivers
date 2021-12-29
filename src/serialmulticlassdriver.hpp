@@ -20,7 +20,7 @@
 #ifndef USID_SERIAL_MULTICLASS
 #define USID_SERIAL_MULTICLASS
 
-#include "Driver.hpp"
+#include "driver.hpp"
 
 namespace usid
 {

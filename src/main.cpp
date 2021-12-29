@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "DriverFactory.hpp"
-#include "Driver.hpp"
+#include "driverfactory.hpp"
+#include "driver.hpp"
 
 #include <iostream>
 #include <string>

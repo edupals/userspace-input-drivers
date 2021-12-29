@@ -20,7 +20,7 @@
 #ifndef USID_USB_RAW_DRIVER
 #define USID_USB_RAW_DRIVER
 
-#include "Driver.hpp"
+#include "driver.hpp"
 
 #include <libusb-1.0/libusb.h>
 

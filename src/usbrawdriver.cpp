@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "UsbRawDriver.hpp"
-#include "DriverFactory.hpp"
+#include "usbrawdriver.hpp"
+#include "driverfactory.hpp"
 
 #include <unistd.h>
 #include <fcntl.h>
