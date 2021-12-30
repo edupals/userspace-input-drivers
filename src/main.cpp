@@ -19,6 +19,8 @@
 
 #include "driverfactory.hpp"
 #include "driver.hpp"
+#include "outputfactory.hpp"
+#include "output.hpp"
 
 #include <iostream>
 #include <string>
@@ -30,9 +32,16 @@ using namespace std;
 void list_drivers()
 {
     for (string driver : DriverFactory::drivers()) {
-        cout<<"* "<<driver<<endl;
+        cout<<"\t"<<driver<<endl;
     }
 
+}
+
+void list_outputs()
+{
+    for (string output : OutputFactory::outputs()) {
+        cout<<"\t"<<output<<endl;
+    }
 }
 
 int main (int argc,char* argv[])
@@ -46,6 +55,11 @@ int main (int argc,char* argv[])
         
         if (cmd == "list-drivers") {
             list_drivers();
+            return 0;
+        }
+
+        if (cmd == "list-outputs") {
+            list_outputs();
             return 0;
         }
         

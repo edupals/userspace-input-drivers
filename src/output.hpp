@@ -62,8 +62,8 @@ namespace usid
     {
         public:
         
-        Output();
-        virtual ~Output();
+        Output(){};
+        virtual ~Output(){};
         
         virtual void push(uint16_t type,uint16_t code,int32_t value) = 0;
         virtual void sync() = 0;
