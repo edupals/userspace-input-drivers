@@ -30,22 +30,12 @@ using namespace usid;
 
 using namespace std;
 
-class UsbRawFactory: public DriverFactory
+static Driver* create()
 {
-    public:
-        
-    UsbRawFactory() : DriverFactory("edupals.usb.raw") 
-    {
-    }
-    
-    Driver* create(string device) override
-    {
-        return new UsbRawDriver(device);
-    }
-    
-};
+    return new UsbRawDriver("/ToDo");
+}
 
-static UsbRawFactory factory;
+static DriverFactory factory("edupals.driver.usbraw",create);
 
 UsbRawDriver::UsbRawDriver(string device) : Driver(device)
 {

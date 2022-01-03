@@ -69,7 +69,7 @@ int main (int argc,char* argv[])
                 return -1;
             }
             
-            Driver* driver = DriverFactory::find(argv[2])->create(argv[3]);
+            Driver* driver = DriverFactory::create(argv[3]);
             
             driver->run();
         }

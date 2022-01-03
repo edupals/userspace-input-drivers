@@ -25,25 +25,25 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <functional>
 
 namespace usid
 {
     class DriverFactory
     {
         public:
-        std::string name;
-        
-        DriverFactory(std::string name);
-        virtual ~DriverFactory();
-        
-        virtual Driver* create(std::string device) = 0;
-        
+
+        DriverFactory(std::string name,std::function<Driver*()> creator);
+
+        static Driver* create(std::string name);
+
         static std::vector<std::string> drivers();
-        static DriverFactory* find(std::string name);
-        
+
         protected:
-        
+        std::function<Driver*()> creator;
+
         static std::map<std::string,DriverFactory*> factories;
+        
     };
 }
 

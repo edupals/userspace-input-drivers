@@ -33,22 +33,12 @@ using namespace usid;
 
 using namespace std;
 
-class SerialMulticlassFactory: public DriverFactory
+static Driver* create()
 {
-    public:
-        
-    SerialMulticlassFactory() : DriverFactory("edupals.serial.multiclass") 
-    {
-    }
-    
-    Driver* create(string device) override
-    {
-        return new SerialMulticlassDriver(device);
-    }
-    
-};
+    return new SerialMulticlassDriver("/ToDo");
+}
 
-static SerialMulticlassFactory factory;
+static DriverFactory factory("edupals.driver.serialmulticlass",create);
 
 SerialMulticlassDriver::SerialMulticlassDriver(string device): Driver(device)
 {

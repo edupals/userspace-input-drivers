@@ -23,35 +23,27 @@ using namespace usid;
 
 using namespace std;
 
-/* static factory map */
 map<string,DriverFactory*> DriverFactory::factories;
 
-DriverFactory::DriverFactory(string name) : name(name)
+DriverFactory::DriverFactory(string name,std::function<Driver*()> creator) : creator(creator)
 {
     DriverFactory::factories[name] = this;
 }
 
-DriverFactory::~DriverFactory()
+Driver* DriverFactory::create(string name)
 {
-    map<string,DriverFactory*>::iterator it = DriverFactory::factories.find(name);
-    
-    if (it != DriverFactory::factories.end()) {
-        DriverFactory::factories.erase(it);
-    }
+    DriverFactory* target = DriverFactory::factories[name];
+
+    return target->creator();
 }
 
 vector<string> DriverFactory::drivers()
 {
     vector<string> ret;
-    
-    for (auto q : DriverFactory::factories) {
+
+    for (auto q: DriverFactory::factories) {
         ret.push_back(q.first);
     }
-    
-    return ret;
-}
 
-DriverFactory* DriverFactory::find(string name)
-{
-    return DriverFactory::factories[name];
+    return ret;
 }
