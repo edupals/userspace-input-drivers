@@ -62,11 +62,15 @@ namespace usid
     {
         public:
         
-        Output(){};
+        Output(std::map<std::string,std::string> properties) : properties(properties) {};
         virtual ~Output(){};
         
         virtual void push(uint16_t type,uint16_t code,int32_t value) = 0;
         virtual void sync() = 0;
+        
+        protected:
+        
+        std::map<std::string,std::string> properties;
     };
 }
 

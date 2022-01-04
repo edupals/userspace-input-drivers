@@ -20,7 +20,10 @@
 #ifndef USID_DRIVER
 #define USID_DRIVER
 
+#include "output.hpp"
+
 #include <string>
+#include <map>
 
 namespace usid
 {
@@ -28,14 +31,20 @@ namespace usid
     {
         public:
         
-        Driver(std::string device);
+        Driver(Output* output, std::map<std::string,std::string> properties);
         virtual ~Driver();
         
         virtual void run();
         
+        Output* get_output()
+        {
+            return output;
+        }
+        
         protected:
         
-        std::string device;
+        std::map<std::string,std::string> properties;
+        Output* output;
     };
 }
 

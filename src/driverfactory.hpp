@@ -33,14 +33,14 @@ namespace usid
     {
         public:
 
-        DriverFactory(std::string name,std::function<Driver*()> creator);
+        DriverFactory(std::string name,std::function<Driver*(Output*, std::map<std::string,std::string>)> creator);
 
-        static Driver* create(std::string name);
+        static Driver* create(std::string name, Output* output, std::map<std::string,std::string> properties);
 
         static std::vector<std::string> drivers();
 
         protected:
-        std::function<Driver*()> creator;
+        std::function<Driver*(Output*, std::map<std::string,std::string>)> creator;
 
         static std::map<std::string,DriverFactory*> factories;
         

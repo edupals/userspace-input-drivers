@@ -25,16 +25,16 @@ using namespace std;
 
 map<string,OutputFactory*> OutputFactory::factories;
 
-OutputFactory::OutputFactory(string name,std::function<Output*()> creator) : creator(creator)
+OutputFactory::OutputFactory(string name,std::function<Output*(map<string,string>)> creator) : creator(creator)
 {
     OutputFactory::factories[name] = this;
 }
 
-Output* OutputFactory::create(string name)
+Output* OutputFactory::create(string name,map<string,string> properties)
 {
     OutputFactory* target = OutputFactory::factories[name];
 
-    return target->creator();
+    return target->creator(properties);
 }
 
 vector<string> OutputFactory::outputs()

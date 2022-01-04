@@ -33,15 +33,23 @@ using namespace usid;
 
 using namespace std;
 
-static Driver* create()
+static Driver* create(Output* output, map<string,string> properties)
 {
-    return new SerialMulticlassDriver("/ToDo");
+    return new SerialMulticlassDriver(output, properties);
 }
 
 static DriverFactory factory("edupals.driver.serialmulticlass",create);
 
-SerialMulticlassDriver::SerialMulticlassDriver(string device): Driver(device)
+SerialMulticlassDriver::SerialMulticlassDriver(Output* output, map<string,string> properties) : Driver(output,properties)
 {
+    string device;
+    
+    if (properties.find("device") == properties.end()) {
+        throw runtime_error("Missing device property");
+    }
+    
+    device = properties["device"];
+    
     struct termios options;
     
     // old copy-pasted code, needs a review

@@ -32,12 +32,13 @@ namespace usid
     {
         public:
         
-        UsbRawDriver(std::string device);
+        UsbRawDriver(Output* output, std::map<std::string,std::string> properties);
         ~UsbRawDriver();
         
         void run() override;
         
         protected:
+        std::string device;
         
         libusb_context* usb_context;
         libusb_device_handle* usb_handle;

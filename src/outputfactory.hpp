@@ -33,14 +33,14 @@ namespace usid
     {
         public:
 
-        OutputFactory(std::string name,std::function<Output*()> creator);
+        OutputFactory(std::string name,std::function<Output*(std::map<std::string,std::string>)> creator);
 
-        static Output* create(std::string name);
+        static Output* create(std::string name, std::map<std::string, std::string> properties);
 
         static std::vector<std::string> outputs();
 
         protected:
-        std::function<Output*()> creator;
+        std::function<Output*(std::map<std::string,std::string>)> creator;
 
         static std::map<std::string,OutputFactory*> factories;
     };

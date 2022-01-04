@@ -30,15 +30,22 @@ using namespace usid;
 
 using namespace std;
 
-static Driver* create()
+static Driver* create(Output* output, map<string,string> properties)
 {
-    return new UsbRawDriver("/ToDo");
+    return new UsbRawDriver(output, properties);
 }
 
 static DriverFactory factory("edupals.driver.usbraw",create);
 
-UsbRawDriver::UsbRawDriver(string device) : Driver(device)
+UsbRawDriver::UsbRawDriver(Output* output, map<string,string> properties) : Driver(output,properties)
 {
+    
+    if (properties.find("device") == properties.end()) {
+        throw runtime_error("Missing device property");
+    }
+    
+    device = properties["device"];
+    
     int status;
     
     if (libusb_init(&usb_context) < 0) {

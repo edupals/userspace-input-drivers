@@ -24,14 +24,14 @@ using namespace usid;
 
 using namespace std;
 
-static Output* create()
+static Output* create(map<string,string> properties)
 {
-    return new UinputOutput();
+    return new UinputOutput(properties);
 }
 
 static OutputFactory factory("edupals.output.uinput",create);
 
-UinputOutput::UinputOutput()
+UinputOutput::UinputOutput(map<string,string> properties) : Output(properties)
 {
 }
 

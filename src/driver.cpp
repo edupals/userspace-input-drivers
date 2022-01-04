@@ -23,7 +23,7 @@ using namespace usid;
 
 using namespace std;
 
-Driver::Driver(string device) : device(device)
+Driver::Driver(Output* output, map<string,string> properties) : output(output), properties(properties)
 {
 }
 

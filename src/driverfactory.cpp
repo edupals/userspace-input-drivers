@@ -25,16 +25,16 @@ using namespace std;
 
 map<string,DriverFactory*> DriverFactory::factories;
 
-DriverFactory::DriverFactory(string name,std::function<Driver*()> creator) : creator(creator)
+DriverFactory::DriverFactory(string name,std::function<Driver*(Output*, map<string,string>)> creator) : creator(creator)
 {
     DriverFactory::factories[name] = this;
 }
 
-Driver* DriverFactory::create(string name)
+Driver* DriverFactory::create(string name, Output* output, map<string,string> properties)
 {
     DriverFactory* target = DriverFactory::factories[name];
 
-    return target->creator();
+    return target->creator(output, properties);
 }
 
 vector<string> DriverFactory::drivers()

@@ -28,7 +28,7 @@ namespace usid
     {
         public:
 
-        ConsoleOutput();
+        ConsoleOutput(std::map<std::string,std::string> properties);
         ~ConsoleOutput();
 
         void push(uint16_t type,uint16_t code,int32_t value) override;

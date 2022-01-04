@@ -36,7 +36,7 @@ namespace usid
     {
         public:
         
-        SerialMulticlassDriver(std::string device);
+        SerialMulticlassDriver(Output* output, std::map<std::string,std::string> properties);
         ~SerialMulticlassDriver();
         
         void run() override;

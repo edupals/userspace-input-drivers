@@ -28,7 +28,7 @@ namespace usid
     {
         public:
 
-        UinputOutput();
+        UinputOutput(std::map<std::string,std::string> properties);
         ~UinputOutput();
 
         void push(uint16_t type,uint16_t code,int32_t value) override;
