@@ -39,6 +39,8 @@ namespace usid
         
         protected:
         std::string device;
+        bool debug;
+        int endpoint;
         
         libusb_context* usb_context;
         libusb_device_handle* usb_handle;

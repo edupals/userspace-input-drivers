@@ -25,6 +25,9 @@
 
 #include <iostream>
 #include <exception>
+#include <iomanip>
+#include <chrono>
+#include <thread>
 
 using namespace usid;
 
@@ -37,7 +40,7 @@ static Driver* create(Output* output, map<string,string> properties)
 
 static DriverFactory factory("edupals.driver.usbraw",create);
 
-UsbRawDriver::UsbRawDriver(Output* output, map<string,string> properties) : Driver(output,properties)
+UsbRawDriver::UsbRawDriver(Output* output, map<string,string> properties) : Driver(output,properties), debug(false), endpoint(2)
 {
     
     if (properties.find("device") == properties.end()) {
@@ -45,6 +48,14 @@ UsbRawDriver::UsbRawDriver(Output* output, map<string,string> properties) : Driv
     }
     
     device = properties["device"];
+    
+    if (properties.find("debug") != properties.end()) {
+        debug = true; // whatever the value is
+    }
+    
+    if (properties.find("endpoint") != properties.end()) {
+        endpoint = std::stoi(properties["endpoint"]);
+    }
     
     int status;
     
@@ -77,7 +88,9 @@ UsbRawDriver::~UsbRawDriver()
 
 void UsbRawDriver::run()
 {
-    clog<<"Running USB Raw driver on "<<device<<endl;
+    if (debug) {
+        clog<<"Running USB Raw driver on "<<device<<endl;
+    }
     
     map<int,string> errcodes;
     
@@ -97,12 +110,16 @@ void UsbRawDriver::run()
         
         if (status!=0) {
             clog<<"read error:"<<status<<" reason:"<<errcodes[status]<<endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             continue;
         }
-        clog<<"read:"<<length<<endl;
-        for (int n=0;n<length;n++){
-            clog<<std::hex<<(int)buffer[n]<<" ";
+        
+        if (debug) {
+            clog<<"read:"<<length<<endl;
+            for (int n=0;n<length;n++){
+                clog<<std::hex<<setfill('0') << setw(2)<<(int)buffer[n]<<" ";
+            }
+            clog<<endl;
         }
-        clog<<endl;
     }
 }

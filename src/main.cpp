@@ -133,6 +133,8 @@ int main (int argc,char* argv[])
         
         
         clog<<"running..."<<endl;
+        
+        driver->run();
     }
     
     return 0;
