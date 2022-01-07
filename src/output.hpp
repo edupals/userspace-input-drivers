@@ -68,9 +68,12 @@ namespace usid
         virtual void push(uint16_t type,uint16_t code,int32_t value) = 0;
         virtual void sync() = 0;
         
+        void set_config(OutputConfig* config);
+        
         protected:
         
         std::map<std::string,std::string> properties;
+        OutputConfig* config;
     };
 }
 

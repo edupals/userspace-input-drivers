@@ -17,36 +17,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "consoleoutput.hpp"
-#include "outputfactory.hpp"
+#ifndef USID_WALTOP_DRIVER
+#define USID_WALTOP_DRIVER
 
-#include <iostream>
+#include "driver.hpp"
 
-using namespace usid;
+#include <libusb-1.0/libusb.h>
 
-using namespace std;
+#include <string>
 
-static Output* create(map<string,string> properties)
+namespace usid
 {
-    return new ConsoleOutput(properties);
+    class WaltopDriver: public Driver
+    {
+        public:
+        
+        WaltopDriver(Output* output, std::map<std::string,std::string> properties);
+        ~WaltopDriver();
+        
+        void run() override;
+        
+        protected:
+        std::string device;
+        bool debug;
+        int endpoint;
+        
+        libusb_context* usb_context;
+        libusb_device_handle* usb_handle;
+        libusb_device* usb_device;
+        int usb_fd;
+    };
 }
 
-static OutputFactory factory("edupals.output.console",create);
-
-ConsoleOutput::ConsoleOutput(map<string,string> properties) : Output(properties)
-{
-}
-
-ConsoleOutput::~ConsoleOutput()
-{
-}
-
-void ConsoleOutput::push(uint16_t type,uint16_t code,int32_t value)
-{
-    cout<<"axis "<<std::dec<<type<<":"<<code<<":"<<value<<endl;
-}
-
-void ConsoleOutput::sync()
-{
-    clog<<"sync\n"<<endl;
-}
+#endif

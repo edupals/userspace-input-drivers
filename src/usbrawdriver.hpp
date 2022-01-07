@@ -40,6 +40,7 @@ namespace usid
         protected:
         std::string device;
         bool debug;
+        int interface;
         int endpoint;
         
         libusb_context* usb_context;

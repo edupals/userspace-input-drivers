@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "usbrawdriver.hpp"
+#include "waltopdriver.hpp"
 #include "driverfactory.hpp"
 
 #include <unistd.h>
@@ -35,12 +35,12 @@ using namespace std;
 
 static Driver* create(Output* output, map<string,string> properties)
 {
-    return new UsbRawDriver(output, properties);
+    return new WaltopDriver(output, properties);
 }
 
-static DriverFactory factory("edupals.driver.usbraw",create);
+static DriverFactory factory("edupals.driver.waltop",create);
 
-UsbRawDriver::UsbRawDriver(Output* output, map<string,string> properties) : Driver(output,properties), debug(false), interface(0), endpoint(2)
+WaltopDriver::WaltopDriver(Output* output, map<string,string> properties) : Driver(output,properties)
 {
     
     if (properties.find("device") == properties.end()) {
@@ -48,18 +48,6 @@ UsbRawDriver::UsbRawDriver(Output* output, map<string,string> properties) : Driv
     }
     
     device = properties["device"];
-    
-    if (properties.find("debug") != properties.end()) {
-        debug = true; // whatever the value is
-    }
-    
-    if (properties.find("interface") != properties.end()) {
-        interface = std::stoi(properties["interface"]);
-    }
-    
-    if (properties.find("endpoint") != properties.end()) {
-        endpoint = std::stoi(properties["endpoint"]);
-    }
     
     int status;
     
@@ -83,18 +71,25 @@ UsbRawDriver::UsbRawDriver(Output* output, map<string,string> properties) : Driv
     }
     
     libusb_claim_interface(usb_handle, 0);
+    
+    OutputConfig* config = new OutputConfig("usid waltop driver",0x172f,0x0037);
+    
+    config->add_absolute(ABS_X,0,12288);
+    config->add_absolute(ABS_Y,0,9612);
+    config->add_absolute(ABS_Z,0,1024);
+    
+    output->set_config(config);
 }
 
-UsbRawDriver::~UsbRawDriver()
+WaltopDriver::~WaltopDriver()
 {
     libusb_exit(usb_context);
 }
 
-void UsbRawDriver::run()
+void WaltopDriver::run()
 {
-    if (debug) {
-        clog<<"Running USB Raw driver on "<<device<<endl;
-    }
+    
+    clog<<"Running Waltop driver on "<<device<<endl;
     
     map<int,string> errcodes;
     
@@ -109,8 +104,23 @@ void UsbRawDriver::run()
     uint8_t buffer[64];
     int length;
     
+    buffer[0] = 2;
+    buffer[1] = 1;
+    
+    status = libusb_control_transfer(usb_handle,
+                            LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_OUT,
+                            0x09/*HID set_report*/,
+                            (3/*HID feature*/ << 8) | buffer[0],
+                            0,
+                            buffer, 2,
+                            1000/*timeout millis*/);
+    
+    if (status<0) {
+        clog<<"set feature report error:"<<status<<" reason:"<<errcodes[status]<<endl;
+    }
+    
     while (true) {
-        status = libusb_interrupt_transfer(usb_handle,(endpoint | LIBUSB_ENDPOINT_IN),buffer,64,&length,1000);
+        status = libusb_interrupt_transfer(usb_handle,(2 | LIBUSB_ENDPOINT_IN),buffer,64,&length,1000);
         
         if (status!=0) {
             clog<<"read error:"<<status<<" reason:"<<errcodes[status]<<endl;
@@ -118,12 +128,19 @@ void UsbRawDriver::run()
             continue;
         }
         
-        if (debug) {
-            clog<<"read:"<<length<<endl;
-            for (int n=0;n<length;n++){
-                clog<<std::hex<<setfill('0') << setw(2)<<(int)buffer[n]<<" ";
-            }
-            clog<<endl;
+        if (buffer[0] == 16) {
+            int mx,my,mz;
+            mx = (int)(buffer[2]+(buffer[3]<<8));
+            my = (int)(buffer[4]+(buffer[5]<<8));
+            mz = (int)(buffer[6]+(buffer[7]<<8));
+            
+            output->push(EV_ABS, ABS_X, mx);
+            output->push(EV_ABS, ABS_Y, my);
+            output->push(EV_ABS, ABS_Z, mz);
+            
+            output->sync();
         }
+        
+        
     }
 }
