@@ -62,8 +62,3 @@ void OutputConfig::add_keys(vector<uint32_t> keys)
     cfg.insert(EV_KEY);
     this->keys.insert(keys.begin(),keys.end());
 }
-
-void Output::set_config(OutputConfig* config)
-{
-    this->config = config;
-}

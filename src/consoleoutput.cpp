@@ -41,6 +41,39 @@ ConsoleOutput::~ConsoleOutput()
 {
 }
 
+void ConsoleOutput::start(OutputConfig* config)
+{
+    map<uint32_t,string> abs_axis_name;
+    abs_axis_name[ABS_X]="Absolute X";
+    abs_axis_name[ABS_Y]="Absolute Y";
+    abs_axis_name[ABS_Z]="Absolute Z";
+    
+    
+    this->config = config;
+    
+    clog<<"stating device ["<<config->name<<"]"<<endl;
+    clog<<"vendor:"<<std::hex<<config->vendor<<endl;
+    clog<<"product:"<<std::hex<<config->product<<endl;
+    clog<<std::dec;
+    
+    for (uint32_t cfg : config->cfg) {
+        switch (cfg) {
+            
+            case EV_ABS:
+                clog<<"Absolute axis:"<<endl;
+                for (uint32_t axis : config->axes) {
+                    clog<<abs_axis_name[axis]<<" ["<<config->axis_cfg[axis].min<<","<<config->axis_cfg[axis].max<<"]"<<endl;
+                }
+                
+            break;
+            
+            case EV_KEY:
+                clog<<"Keys:"<<endl;
+            break;
+        }
+    }
+}
+
 void ConsoleOutput::push(uint16_t type,uint16_t code,int32_t value)
 {
     cout<<"axis "<<std::dec<<type<<":"<<code<<":"<<value<<endl;

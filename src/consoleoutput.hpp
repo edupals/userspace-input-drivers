@@ -31,8 +31,13 @@ namespace usid
         ConsoleOutput(std::map<std::string,std::string> properties);
         ~ConsoleOutput();
 
+        void start(OutputConfig* config);
         void push(uint16_t type,uint16_t code,int32_t value) override;
         void sync() override;
+        
+        private:
+        
+        OutputConfig* config;
     };
 }
 

@@ -30,7 +30,8 @@ namespace usid
 
         UinputOutput(std::map<std::string,std::string> properties);
         ~UinputOutput();
-
+        
+        void start(OutputConfig* config);
         void push(uint16_t type,uint16_t code,int32_t value) override;
         void sync() override;
     };

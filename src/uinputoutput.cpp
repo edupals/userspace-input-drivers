@@ -39,6 +39,10 @@ UinputOutput::~UinputOutput()
 {
 }
 
+void UinputOutput::start(OutputConfig* config)
+{
+}
+
 void UinputOutput::push(uint16_t type,uint16_t code,int32_t value)
 {
 }

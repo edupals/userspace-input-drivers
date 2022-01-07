@@ -78,7 +78,7 @@ WaltopDriver::WaltopDriver(Output* output, map<string,string> properties) : Driv
     config->add_absolute(ABS_Y,0,9612);
     config->add_absolute(ABS_Z,0,1024);
     
-    output->set_config(config);
+    output->start(config);
 }
 
 WaltopDriver::~WaltopDriver()
