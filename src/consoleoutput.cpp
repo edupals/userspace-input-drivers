@@ -48,7 +48,10 @@ void ConsoleOutput::start(OutputConfig* config)
     abs_axis_name[ABS_Y]="Absolute Y";
     abs_axis_name[ABS_Z]="Absolute Z";
     
-    
+    map<uint32_t,string> key_name;
+    key_name[BTN_LEFT]="Left button";
+    //key_name[BTN_RIGHT]="Right button";
+
     this->config = config;
     
     clog<<"stating device ["<<config->name<<"]"<<endl;
@@ -62,13 +65,34 @@ void ConsoleOutput::start(OutputConfig* config)
             case EV_ABS:
                 clog<<"Absolute axis:"<<endl;
                 for (uint32_t axis : config->axes) {
-                    clog<<abs_axis_name[axis]<<" ["<<config->axis_cfg[axis].min<<","<<config->axis_cfg[axis].max<<"]"<<endl;
+                    map<uint32_t,string>::iterator it;
+
+                    it = abs_axis_name.find(axis);
+                    if (it == abs_axis_name.end()) {
+                        clog<<axis<<" ["<<config->axis_cfg[axis].min<<","<<config->axis_cfg[axis].max<<"]"<<endl;
+                    }
+                    else {
+                        clog<<it->second<<" ["<<config->axis_cfg[axis].min<<","<<config->axis_cfg[axis].max<<"]"<<endl;
+                    }
                 }
-                
+                clog<<endl;
             break;
             
             case EV_KEY:
                 clog<<"Keys:"<<endl;
+                for (uint32_t key: config->keys) {
+                    map<uint32_t,string>::iterator it;
+
+                    it = key_name.find(key);
+
+                    if ( it == key_name.end()) {
+                        clog<<key<<endl;
+                    }
+                    else {
+                        clog<<it->second<<endl;
+                    }
+                }
+                clog<<endl;
             break;
         }
     }
@@ -76,10 +100,15 @@ void ConsoleOutput::start(OutputConfig* config)
 
 void ConsoleOutput::push(uint16_t type,uint16_t code,int32_t value)
 {
-    cout<<"axis "<<std::dec<<type<<":"<<code<<":"<<value<<endl;
+    map<uint16_t,string> event_names;
+    event_names[EV_ABS]="Absolute axis";
+    event_names[EV_KEY]="Key";
+    event_names[EV_SYN]="Sync";
+
+    cout<<std::dec<<type<<" "<<event_names[type]<<":"<<code<<":"<<value<<endl;
 }
 
 void ConsoleOutput::sync()
 {
-    clog<<"sync\n"<<endl;
+    //clog<<"sync\n"<<endl;
 }

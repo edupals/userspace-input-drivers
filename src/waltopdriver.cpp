@@ -78,6 +78,8 @@ WaltopDriver::WaltopDriver(Output* output, map<string,string> properties) : Driv
     config->add_absolute(ABS_Y,0,9612);
     config->add_absolute(ABS_Z,0,1024);
     
+    config->add_buttons({BTN_LEFT,BTN_RIGHT});
+
     output->start(config);
 }
 
@@ -106,7 +108,7 @@ void WaltopDriver::run()
     
     buffer[0] = 2;
     buffer[1] = 1;
-    
+
     status = libusb_control_transfer(usb_handle,
                             LIBUSB_REQUEST_TYPE_CLASS|LIBUSB_RECIPIENT_INTERFACE|LIBUSB_ENDPOINT_OUT,
                             0x09/*HID set_report*/,
@@ -118,11 +120,11 @@ void WaltopDriver::run()
     if (status<0) {
         clog<<"set feature report error:"<<status<<" reason:"<<errcodes[status]<<endl;
     }
-    
+
     while (true) {
         status = libusb_interrupt_transfer(usb_handle,(2 | LIBUSB_ENDPOINT_IN),buffer,64,&length,1000);
         
-        if (status!=0) {
+        if (status!=0 and status!=LIBUSB_ERROR_TIMEOUT) {
             clog<<"read error:"<<status<<" reason:"<<errcodes[status]<<endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             continue;
@@ -130,6 +132,10 @@ void WaltopDriver::run()
         
         if (buffer[0] == 16) {
             int mx,my,mz;
+
+            int tip = buffer[1] & 0x01;
+            int barrel = (buffer[1] & 0x02)>>1;
+
             mx = (int)(buffer[2]+(buffer[3]<<8));
             my = (int)(buffer[4]+(buffer[5]<<8));
             mz = (int)(buffer[6]+(buffer[7]<<8));
@@ -138,6 +144,9 @@ void WaltopDriver::run()
             output->push(EV_ABS, ABS_Y, my);
             output->push(EV_ABS, ABS_Z, mz);
             
+            output->push(EV_KEY, BTN_LEFT, tip);
+            output->push(EV_KEY, BTN_RIGHT, barrel);
+
             output->sync();
         }
         
